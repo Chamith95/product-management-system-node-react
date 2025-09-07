@@ -1,0 +1,65 @@
+CreateProductRequest:
+  type: object
+  required:
+    - name
+    - description
+    - price
+    - quantity
+    - category
+  properties:
+    name:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Product name
+      example: "Premium Widget"
+    description:
+      type: string
+      maxLength: 1000
+      description: Product description
+      example: "High-quality widget for all your needs"
+    price:
+      type: number
+      minimum: 0
+      description: Product price in cents
+      example: 2999
+    quantity:
+      type: integer
+      minimum: 0
+      description: Available quantity in stock
+      example: 50
+    category:
+      type: string
+      enum: [electronics, clothing, books, home, sports, other]
+      description: Product category
+      example: "electronics"
+
+UpdateProductRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+      maxLength: 255
+      description: Product name
+      example: "Premium Widget"
+    description:
+      type: string
+      maxLength: 1000
+      description: Product description
+      example: "High-quality widget for all your needs"
+    price:
+      type: number
+      minimum: 0
+      description: Product price in cents
+      example: 2999
+    quantity:
+      type: integer
+      minimum: 0
+      description: Available quantity in stock
+      example: 50
+    category:
+      type: string
+      enum: [electronics, clothing, books, home, sports, other]
+      description: Product category
+      example: "electronics"

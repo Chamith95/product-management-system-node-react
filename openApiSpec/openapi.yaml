@@ -1,0 +1,49 @@
+openapi: 3.1.0
+info:
+  title: Product Management API
+  description: |
+    A scalable event-driven product management system for e-commerce platforms.
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
+tags:
+  - name: Products
+    description: Product management operations
+  - name: Events
+    description: Event streaming and notifications
+  - name: Health
+    description: Health check endpoints
+
+paths:
+  /health:
+    $ref: './paths/health.yaml#/~1health'
+  /products:
+    $ref: './paths/products.yaml#/~1products'
+  /products/{id}:
+    $ref: './paths/products.yaml#/~1products~1{id}'
+  /events/stream:
+    $ref: './paths/events.yaml#/~1events~1stream'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      $ref: './components/securitySchemes.yaml#/BearerAuth'
+  schemas:
+    Product:
+      $ref: './components/schemas/Product.yaml'
+    CreateProductRequest:
+      $ref: './components/schemas/ProductRequests.yaml#/CreateProductRequest'
+    UpdateProductRequest:
+      $ref: './components/schemas/ProductRequests.yaml#/UpdateProductRequest'
+    Pagination:
+      $ref: './components/schemas/Common.yaml#/Pagination'
+    ErrorResponse:
+      $ref: './components/schemas/Common.yaml#/ErrorResponse'
+    Event:
+      $ref: './components/schemas/Common.yaml#/Event'

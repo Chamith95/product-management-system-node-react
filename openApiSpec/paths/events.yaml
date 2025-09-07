@@ -1,0 +1,32 @@
+/events/stream:
+  get:
+    tags:
+      - Events
+    summary: Stream events
+    description: Server-Sent Events endpoint for real-time notifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: eventTypes
+        in: query
+        description: Comma-separated list of event types to subscribe to
+        required: false
+        schema:
+          type: string
+          example: "ProductCreated,ProductUpdated,LowStockWarning"
+    responses:
+      '200':
+        description: Event stream established
+        content:
+          text/event-stream:
+            schema:
+              type: string
+              example: |
+                data: {"type":"LowStockWarning","productId":"123","message":"Product 'Widget' is low on stock"}
+                
+                data: {"type":"ProductCreated","productId":"456","name":"New Product"}
+                
+      '401':
+        description: Unauthorized - Invalid or missing authentication token
+      '500':
+        description: Internal server error

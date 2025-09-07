@@ -1,0 +1,58 @@
+type: object
+required:
+  - id
+  - name
+  - description
+  - price
+  - quantity
+  - category
+  - sellerId
+  - createdAt
+  - updatedAt
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique product identifier
+    example: "123e4567-e89b-12d3-a456-426614174000"
+  name:
+    type: string
+    minLength: 1
+    maxLength: 255
+    description: Product name
+    example: "Premium Widget"
+  description:
+    type: string
+    maxLength: 1000
+    description: Product description
+    example: "High-quality widget for all your needs"
+  price:
+    type: number
+    minimum: 0
+    description: Product price in cents
+    example: 2999
+  quantity:
+    type: integer
+    minimum: 0
+    description: Available quantity in stock
+    example: 50
+  category:
+    type: string
+    enum: [electronics, clothing, books, home, sports, other]
+    description: Product category
+    example: "electronics"
+  sellerId:
+    type: string
+    format: uuid
+    description: ID of the seller who owns this product
+    example: "456e7890-e89b-12d3-a456-426614174001"
+  createdAt:
+    type: string
+    format: date-time
+    description: Product creation timestamp
+    example: "2024-01-15T10:30:00Z"
+  updatedAt:
+    type: string
+    format: date-time
+    description: Last update timestamp
+    example: "2024-01-15T10:30:00Z"

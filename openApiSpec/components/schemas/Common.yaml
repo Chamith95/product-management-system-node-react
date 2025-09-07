@@ -1,0 +1,79 @@
+Pagination:
+  type: object
+  properties:
+    page:
+      type: integer
+      description: Current page number
+      example: 1
+    limit:
+      type: integer
+      description: Number of items per page
+      example: 20
+    total:
+      type: integer
+      description: Total number of items
+      example: 150
+    totalPages:
+      type: integer
+      description: Total number of pages
+      example: 8
+    hasNext:
+      type: boolean
+      description: Whether there is a next page
+      example: true
+    hasPrev:
+      type: boolean
+      description: Whether there is a previous page
+      example: false
+
+ErrorResponse:
+  type: object
+  properties:
+    error:
+      type: string
+      description: Error message
+      example: "Validation failed"
+    code:
+      type: string
+      description: Error code
+      example: "VALIDATION_ERROR"
+    details:
+      type: array
+      items:
+        type: object
+        properties:
+          field:
+            type: string
+            description: Field name
+          message:
+            type: string
+            description: Field-specific error message
+      description: Detailed error information
+      example:
+        - field: "price"
+          message: "Price must be greater than 0"
+
+Event:
+  type: object
+  required:
+    - type
+    - timestamp
+    - data
+  properties:
+    type:
+      type: string
+      enum: [ProductCreated, ProductUpdated, ProductDeleted, LowStockWarning]
+      description: Event type
+      example: "ProductCreated"
+    timestamp:
+      type: string
+      format: date-time
+      description: Event timestamp
+      example: "2024-01-15T10:30:00Z"
+    data:
+      type: object
+      description: Event-specific data
+      example:
+        productId: "123e4567-e89b-12d3-a456-426614174000"
+        name: "Premium Widget"
+        quantity: 5
