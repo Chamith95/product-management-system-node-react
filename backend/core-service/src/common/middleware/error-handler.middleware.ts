@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { DomainException } from '../exceptions/domain.exception';
-import { NotFoundException } from '../exceptions/not-found,exception';
+import { NotFoundException } from '../exceptions/not-found.exception';
 import { ValidationException } from '../exceptions/validation.exception';
 import { ParamRequiredException } from '../exceptions/param-required.exception';
 

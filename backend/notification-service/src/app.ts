@@ -1,31 +1,33 @@
-import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { ErrorHandler, initializeDatabase, RequestLogger } from './common';
-import { HealthRoutes } from './modules/health';
-import { ProductRoutes } from './modules/products';
-import { setupSwagger } from './swagger';
-import { eventEmitterService } from './common/kafka/event-emitter.service';
+import { createServer } from 'http';
+import { ErrorHandler } from './common/middleware/error-handler.middleware';
+import { RequestLogger } from './common/middleware/request-logger.middleware';
+import { WebSocketService } from './services/websocket.service';
+import { NotificationConsumerService } from './services/notification-consumer.service';
 
 // Load environment variables
 dotenv.config();
 
 class App {
   public app: express.Application;
+  public server: any;
   private readonly port: number;
+  private webSocketService: WebSocketService;
+  public notificationConsumerService: NotificationConsumerService;
 
   constructor() {
     this.app = express();
-    this.port = parseInt(process.env.PORT || '3000');
+    this.server = createServer(this.app);
+    this.port = parseInt(process.env.PORT || '3002');
     
     this.initializeMiddlewares();
-    this.setupSwagger();
     this.initializeRoutes();
     this.initializeErrorHandling();
+    this.initializeWebSocket();
   }
 
   private initializeMiddlewares(): void {
@@ -33,8 +35,6 @@ class App {
     this.app.use(helmet());
     this.app.use(cors());
     
-    // Compression middleware
-    this.app.use(compression());
     
     // Request logging
     this.app.use(RequestLogger.log);
@@ -42,7 +42,7 @@ class App {
     // Rate limiting
     const limiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per windowMs
+      max: 1000, // limit each IP to 1000 requests per windowMs
       message: {
         success: false,
         error: {
@@ -53,27 +53,33 @@ class App {
     });
     this.app.use(limiter);
     
-
     this.app.use(express.json({ limit: '10mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
   }
 
   private initializeRoutes(): void {
-    // Health check route
-    this.app.use('/health', HealthRoutes);
-    
-    // API routes
-    this.app.use('/products', ProductRoutes);
-
     this.app.get('/', (req, res) => {
       res.json({
         success: true,
-        message: 'Product Management API',
+        message: 'Notification Service - WebSocket API',
         version: '1.0.0',
         endpoints: {
           health: '/health',
-          products: '/products'
+          websocket: `ws://localhost:${this.port}`
+        },
+        connectedSellers: this.webSocketService.getConnectedSellers(),
+        totalClients: this.webSocketService.getTotalConnectedClients()
+      });
+    });
+    
+    this.app.get('/health', (req, res) => {
+      res.json({
+        success: true,
+        message: 'Notification service is healthy',
+        timestamp: new Date().toISOString(),
+        websocket: {
+          connectedSellers: this.webSocketService.getConnectedSellers(),
+          totalClients: this.webSocketService.getTotalConnectedClients()
         }
       });
     });
@@ -89,51 +95,49 @@ class App {
     });
   }
 
+  private initializeWebSocket(): void {
+    this.webSocketService = new WebSocketService(this.server);
+    this.notificationConsumerService = new NotificationConsumerService(this.webSocketService);
+  }
+
   private initializeErrorHandling(): void {
     this.app.use(ErrorHandler.handle);
   }
 
   public async start(): Promise<void> {
     try {
-      await initializeDatabase();
+      await this.notificationConsumerService.initialize();
       
-      await eventEmitterService.initialize();
-      
-      this.app.listen(this.port, () => {
-        console.log(`Products service running on port ${this.port}`);
+      this.server.listen(this.port, () => {
+        console.log(`Notification service running on port ${this.port}`);
         console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log('WebSocket server initialized');
+        console.log('Kafka consumer initialized');
       });
     } catch (error) {
-      console.error('Failed to start products service:', error);
+      console.error('Failed to start notification service:', error);
       process.exit(1);
     }
-  }
-
-  private setupSwagger(): void {
-    //@ts-ignore
-    setupSwagger(this.app);
   }
 }
 
 
-
-// Start the application
 const app = new App();
 app.start().catch((error) => {
-  console.error('Application startup failed:', error);
+  console.error('Notification service startup failed:', error);
   process.exit(1);
 });
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
   console.log('Received SIGINT, shutting down gracefully...');
-  await eventEmitterService.disconnect();
+  await app.notificationConsumerService.disconnect();
   process.exit(0);
 });
 
 process.on('SIGTERM', async () => {
   console.log('Received SIGTERM, shutting down gracefully...');
-  await eventEmitterService.disconnect();
+  await app.notificationConsumerService.disconnect();
   process.exit(0);
 });
 

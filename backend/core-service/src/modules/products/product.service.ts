@@ -4,12 +4,13 @@ import { CreateProductRequest } from './dto/create-product-request.dto';
 import { UpdateProductRequest } from './dto/update-product-request.dto';
 import { validate } from 'class-validator';
 import { ValidationException, NotFoundException } from '../../common';
+import { eventEmitterService } from '../../common/kafka/event-emitter.service';
 
 export class ProductService {
   constructor(private readonly productRepository: ProductRepository) {}
 
   async createProduct(createRequest: CreateProductRequest, sellerId: string): Promise<Product> {
-    // Validate the request
+
     const errors = await validate(createRequest);
     if (errors.length > 0) {
       const errorMessages = errors.map(error => 
@@ -20,7 +21,15 @@ export class ProductService {
 
     const product = new Product();
     Object.assign(product, createRequest, { sellerId });
-    return await this.productRepository.save(product);
+    const savedProduct = await this.productRepository.save(product);
+    
+    try {
+      await eventEmitterService.emitProductCreated(savedProduct);
+    } catch (error) {
+      console.error('Failed to emit ProductCreated event:', error);
+    }
+    
+    return savedProduct;
   }
 
   async getProductById(id: string): Promise<Product> {
@@ -44,7 +53,6 @@ export class ProductService {
   }
 
   async updateProduct(id: string, updateRequest: UpdateProductRequest): Promise<Product> {
-    // Validate the request
     const errors = await validate(updateRequest);
     if (errors.length > 0) {
       const errorMessages = errors.map(error => 
@@ -58,9 +66,16 @@ export class ProductService {
       throw new NotFoundException('Product', id);
     }
 
+    const previousQuantity = existingProduct.quantity;
     const updatedProduct = await this.productRepository.update(id, updateRequest);
     if (!updatedProduct) {
       throw new NotFoundException('Product', id);
+    }
+
+    try {
+      await eventEmitterService.emitProductUpdated(updatedProduct, previousQuantity);
+    } catch (error) {
+      console.error('Failed to emit ProductUpdated event:', error);
     }
 
     return updatedProduct;
@@ -78,6 +93,12 @@ export class ProductService {
     const deleted = await this.productRepository.delete(id);
     if (!deleted) {
       throw new NotFoundException('Product', id);
+    }
+
+    try {
+      await eventEmitterService.emitProductDeleted(existingProduct);
+    } catch (error) {
+      console.error('Failed to emit ProductDeleted event:', error);
     }
   }
 }

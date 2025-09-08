@@ -1,5 +1,4 @@
 import { Link } from '@tanstack/react-router'
-import { NotificationsDropdown } from '@/components/NotificationsDropdown'
 
 export default function Header() {
   return (
@@ -8,9 +7,7 @@ export default function Header() {
         <nav className="flex items-center gap-6">
           <Link to="/" className="font-semibold text-lg hover:text-white transition-colors">Products</Link>
         </nav>
-        <div className="flex items-center gap-3">
-          <NotificationsDropdown />
-        </div>
+        <div className="flex items-center gap-3" />
       </div>
     </header>
   )

@@ -5,12 +5,11 @@ import { TypeOrmProductRepository } from './repositories/type-orm-product.reposi
 
 const router = Router();
 
-// Dependency injection
+
 const productRepository = new TypeOrmProductRepository();
 const productService = new ProductService(productRepository);
 const productController = new ProductController(productService);
 
-// Routes
 router.post('/', productController.createProduct);
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
