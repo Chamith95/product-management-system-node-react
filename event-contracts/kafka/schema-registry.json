@@ -1,0 +1,438 @@
+{
+  "schemas": [
+    {
+      "name": "ProductCreatedEvent",
+      "type": "AVRO",
+      "schema": {
+        "type": "record",
+        "name": "ProductCreatedEvent",
+        "namespace": "com.productmanagement.events",
+        "fields": [
+          {
+            "name": "eventId",
+            "type": "string",
+            "doc": "Unique identifier for the event"
+          },
+          {
+            "name": "eventType",
+            "type": "string",
+            "doc": "Type of the event"
+          },
+          {
+            "name": "timestamp",
+            "type": "string",
+            "doc": "ISO 8601 timestamp when the event occurred"
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "doc": "Schema version"
+          },
+          {
+            "name": "source",
+            "type": "string",
+            "doc": "Service that generated the event"
+          },
+          {
+            "name": "correlationId",
+            "type": "string",
+            "doc": "Correlation ID for tracing related events"
+          },
+          {
+            "name": "userId",
+            "type": "string",
+            "doc": "ID of the user who triggered the event"
+          },
+          {
+            "name": "sessionId",
+            "type": ["null", "string"],
+            "default": null,
+            "doc": "Session identifier"
+          },
+          {
+            "name": "metadata",
+            "type": ["null", {
+              "type": "record",
+              "name": "EventMetadata",
+              "fields": [
+                {
+                  "name": "userAgent",
+                  "type": ["null", "string"],
+                  "default": null
+                },
+                {
+                  "name": "ipAddress",
+                  "type": ["null", "string"],
+                  "default": null
+                },
+                {
+                  "name": "requestId",
+                  "type": ["null", "string"],
+                  "default": null
+                }
+              ]
+            }],
+            "default": null
+          },
+          {
+            "name": "data",
+            "type": {
+              "type": "record",
+              "name": "ProductCreatedData",
+              "fields": [
+                {
+                  "name": "productId",
+                  "type": "string",
+                  "doc": "Unique product identifier"
+                },
+                {
+                  "name": "sellerId",
+                  "type": "string",
+                  "doc": "ID of the seller"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "doc": "Product name"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "doc": "Product description"
+                },
+                {
+                  "name": "price",
+                  "type": "double",
+                  "doc": "Product price"
+                },
+                {
+                  "name": "quantity",
+                  "type": "int",
+                  "doc": "Available quantity"
+                },
+                {
+                  "name": "category",
+                  "type": {
+                    "type": "enum",
+                    "name": "ProductCategory",
+                    "symbols": ["Electronics", "Clothing", "Books", "Home", "Sports", "Other"]
+                  },
+                  "doc": "Product category"
+                },
+                {
+                  "name": "createdAt",
+                  "type": "string",
+                  "doc": "Creation timestamp"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProductUpdatedEvent",
+      "type": "AVRO",
+      "schema": {
+        "type": "record",
+        "name": "ProductUpdatedEvent",
+        "namespace": "com.productmanagement.events",
+        "fields": [
+          {
+            "name": "eventId",
+            "type": "string"
+          },
+          {
+            "name": "eventType",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "type": "string"
+          },
+          {
+            "name": "source",
+            "type": "string"
+          },
+          {
+            "name": "correlationId",
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "type": "string"
+          },
+          {
+            "name": "sessionId",
+            "type": ["null", "string"],
+            "default": null
+          },
+          {
+            "name": "metadata",
+            "type": ["null", "EventMetadata"],
+            "default": null
+          },
+          {
+            "name": "data",
+            "type": {
+              "type": "record",
+              "name": "ProductUpdatedData",
+              "fields": [
+                {
+                  "name": "productId",
+                  "type": "string"
+                },
+                {
+                  "name": "sellerId",
+                  "type": "string"
+                },
+                {
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "name": "description",
+                  "type": "string"
+                },
+                {
+                  "name": "price",
+                  "type": "double"
+                },
+                {
+                  "name": "quantity",
+                  "type": "int"
+                },
+                {
+                  "name": "category",
+                  "type": "ProductCategory"
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "string"
+                },
+                {
+                  "name": "previousQuantity",
+                  "type": ["null", "int"],
+                  "default": null
+                },
+                {
+                  "name": "changes",
+                  "type": {
+                    "type": "map",
+                    "values": "string"
+                  }
+                },
+                {
+                  "name": "previousState",
+                  "type": {
+                    "type": "map",
+                    "values": "string"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProductDeletedEvent",
+      "type": "AVRO",
+      "schema": {
+        "type": "record",
+        "name": "ProductDeletedEvent",
+        "namespace": "com.productmanagement.events",
+        "fields": [
+          {
+            "name": "eventId",
+            "type": "string"
+          },
+          {
+            "name": "eventType",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "type": "string"
+          },
+          {
+            "name": "source",
+            "type": "string"
+          },
+          {
+            "name": "correlationId",
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "type": "string"
+          },
+          {
+            "name": "sessionId",
+            "type": ["null", "string"],
+            "default": null
+          },
+          {
+            "name": "metadata",
+            "type": ["null", "EventMetadata"],
+            "default": null
+          },
+          {
+            "name": "data",
+            "type": {
+              "type": "record",
+              "name": "ProductDeletedData",
+              "fields": [
+                {
+                  "name": "productId",
+                  "type": "string"
+                },
+                {
+                  "name": "sellerId",
+                  "type": "string"
+                },
+                {
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "name": "deletedAt",
+                  "type": "string"
+                },
+                {
+                  "name": "reason",
+                  "type": ["null", "string"],
+                  "default": null
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "LowStockWarningEvent",
+      "type": "AVRO",
+      "schema": {
+        "type": "record",
+        "name": "LowStockWarningEvent",
+        "namespace": "com.productmanagement.events",
+        "fields": [
+          {
+            "name": "eventId",
+            "type": "string"
+          },
+          {
+            "name": "eventType",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "type": "string"
+          },
+          {
+            "name": "source",
+            "type": "string"
+          },
+          {
+            "name": "correlationId",
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "type": "string"
+          },
+          {
+            "name": "sessionId",
+            "type": ["null", "string"],
+            "default": null
+          },
+          {
+            "name": "metadata",
+            "type": ["null", "EventMetadata"],
+            "default": null
+          },
+          {
+            "name": "data",
+            "type": {
+              "type": "record",
+              "name": "LowStockWarningData",
+              "fields": [
+                {
+                  "name": "productId",
+                  "type": "string"
+                },
+                {
+                  "name": "sellerId",
+                  "type": "string"
+                },
+                {
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "name": "currentQuantity",
+                  "type": "int"
+                },
+                {
+                  "name": "threshold",
+                  "type": "int"
+                },
+                {
+                  "name": "category",
+                  "type": "ProductCategory"
+                },
+                {
+                  "name": "triggeredAt",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "topics": [
+    {
+      "name": "product-events",
+      "partitions": 3,
+      "replicationFactor": 1,
+      "config": {
+        "cleanup.policy": "delete",
+        "retention.ms": "604800000",
+        "segment.ms": "86400000"
+      }
+    }
+  ],
+  "consumerGroups": [
+    {
+      "name": "analytics-service",
+      "topics": ["product-events"],
+      "config": {
+        "auto.offset.reset": "earliest",
+        "enable.auto.commit": "true"
+      }
+    },
+    {
+      "name": "notification-service",
+      "topics": ["product-events"],
+      "config": {
+        "auto.offset.reset": "earliest",
+        "enable.auto.commit": "true"
+      }
+    }
+  ]
+}

@@ -28,7 +28,8 @@ npm install
 
 2. **Set up environment variables:**
 ```bash
-cp env.example .env
+# Copy the base environment file from project root
+cp ../../env.example ../../.env
 # Edit .env with your database credentials
 ```
 

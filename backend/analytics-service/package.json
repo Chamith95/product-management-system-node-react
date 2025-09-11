@@ -1,0 +1,53 @@
+{
+  "name": "analytics-service",
+  "version": "1.0.0",
+  "description": "Analytics service for product management system",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "setup-db": "node scripts/setup-dynamodb.js",
+    "setup-s3": "node scripts/setup-s3.js",
+    "setup-all": "npm run setup-db && npm run setup-s3",
+    "docker:build": "docker build -t analytics-service .",
+    "docker:run": "docker run -p 3003:3003 analytics-service"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.450.0",
+    "@aws-sdk/lib-dynamodb": "^3.450.0",
+    "@aws-sdk/client-s3": "^3.450.0",
+    "kafkajs": "^2.2.4",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/morgan": "^1.9.9",
+    "@types/uuid": "^9.0.7",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.2",
+    "ts-node-dev": "^2.0.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.8",
+    "ts-jest": "^29.1.1"
+  },
+  "keywords": [
+    "analytics",
+    "dynamodb",
+    "kafka",
+    "microservice",
+    "event-driven"
+  ],
+  "author": "Product Management System",
+  "license": "MIT"
+}

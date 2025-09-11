@@ -15,7 +15,7 @@ export interface NotificationData {
   timestamp: string
 }
 
-const WS_BASE = import.meta.env.VITE_WS_BASE ?? 'http://localhost:3002'
+const WS_BASE = import.meta.env.VITE_NOTIFICATION_URL ?? 'http://localhost:3001'
 
 export function connectNotifications(onNotification: (n: NotificationData) => void) {
   const sellerId = localStorage.getItem('seller_id') || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'

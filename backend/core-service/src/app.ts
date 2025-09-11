@@ -20,7 +20,7 @@ class App {
 
   constructor() {
     this.app = express();
-    this.port = parseInt(process.env.PORT || '3000');
+    this.port = parseInt(process.env.CORE_SERVICE_PORT || '3000');
     
     this.initializeMiddlewares();
     this.setupSwagger();

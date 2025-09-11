@@ -1,0 +1,288 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://api.example.com/schemas/product-events.json",
+  "title": "Product Events Schema",
+  "description": "JSON Schema for Product Management System events",
+  "definitions": {
+    "BaseEvent": {
+      "type": "object",
+      "required": ["eventId", "eventType", "timestamp", "version", "source", "correlationId", "userId"],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the event"
+        },
+        "eventType": {
+          "type": "string",
+          "enum": ["ProductCreated", "ProductUpdated", "ProductDeleted", "LowStockWarning"],
+          "description": "Type of the event"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when the event occurred"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Schema version"
+        },
+        "source": {
+          "type": "string",
+          "description": "Service that generated the event"
+        },
+        "correlationId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Correlation ID for tracing related events"
+        },
+        "userId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "ID of the user who triggered the event"
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Session identifier"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "userAgent": {
+              "type": "string",
+              "description": "User agent string"
+            },
+            "ipAddress": {
+              "type": "string",
+              "format": "ipv4",
+              "description": "IP address of the request"
+            },
+            "requestId": {
+              "type": "string",
+              "description": "Request identifier"
+            }
+          }
+        }
+      }
+    },
+    "ProductCreatedEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseEvent" },
+        {
+          "properties": {
+            "eventType": {
+              "const": "ProductCreated"
+            },
+            "data": {
+              "type": "object",
+              "required": ["productId", "sellerId", "name", "description", "price", "quantity", "category", "createdAt"],
+              "properties": {
+                "productId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique product identifier"
+                },
+                "sellerId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "ID of the seller"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255,
+                  "description": "Product name"
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 1000,
+                  "description": "Product description"
+                },
+                "price": {
+                  "type": "number",
+                  "minimum": 0,
+                  "description": "Product price"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Available quantity"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": ["Electronics", "Clothing", "Books", "Home", "Sports", "Other"],
+                  "description": "Product category"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Creation timestamp"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProductUpdatedEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseEvent" },
+        {
+          "properties": {
+            "eventType": {
+              "const": "ProductUpdated"
+            },
+            "data": {
+              "type": "object",
+              "required": ["productId", "sellerId", "name", "description", "price", "quantity", "category", "updatedAt", "changes", "previousState"],
+              "properties": {
+                "productId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "sellerId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 1000
+                },
+                "price": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "quantity": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "category": {
+                  "type": "string",
+                  "enum": ["Electronics", "Clothing", "Books", "Home", "Sports", "Other"]
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "previousQuantity": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Previous quantity before update"
+                },
+                "changes": {
+                  "type": "object",
+                  "description": "Fields that were changed"
+                },
+                "previousState": {
+                  "type": "object",
+                  "description": "Previous state of the product"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ProductDeletedEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseEvent" },
+        {
+          "properties": {
+            "eventType": {
+              "const": "ProductDeleted"
+            },
+            "data": {
+              "type": "object",
+              "required": ["productId", "sellerId", "name", "deletedAt"],
+              "properties": {
+                "productId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "sellerId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "deletedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Reason for deletion"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "LowStockWarningEvent": {
+      "allOf": [
+        { "$ref": "#/definitions/BaseEvent" },
+        {
+          "properties": {
+            "eventType": {
+              "const": "LowStockWarning"
+            },
+            "data": {
+              "type": "object",
+              "required": ["productId", "sellerId", "name", "currentQuantity", "threshold", "category", "triggeredAt"],
+              "properties": {
+                "productId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "sellerId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "currentQuantity": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Current quantity"
+                },
+                "threshold": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Low stock threshold"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": ["Electronics", "Clothing", "Books", "Home", "Sports", "Other"]
+                },
+                "triggeredAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "When the warning was triggered"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/definitions/ProductCreatedEvent" },
+    { "$ref": "#/definitions/ProductUpdatedEvent" },
+    { "$ref": "#/definitions/ProductDeletedEvent" },
+    { "$ref": "#/definitions/LowStockWarningEvent" }
+  ]
+}

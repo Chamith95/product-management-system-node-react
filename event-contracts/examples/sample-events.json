@@ -1,0 +1,139 @@
+{
+  "examples": [
+    {
+      "eventType": "ProductCreated",
+      "event": {
+        "eventId": "evt_123e4567-e89b-12d3-a456-426614174000",
+        "eventType": "ProductCreated",
+        "timestamp": "2023-12-01T10:30:00Z",
+        "version": "1.0.0",
+        "source": "core-service",
+        "correlationId": "corr_456e7890-e89b-12d3-a456-426614174001",
+        "userId": "user_789e0123-e89b-12d3-a456-426614174002",
+        "sessionId": "sess_abc123",
+        "metadata": {
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+          "ipAddress": "192.168.1.100",
+          "requestId": "req_123456"
+        },
+        "data": {
+          "productId": "prod_123e4567-e89b-12d3-a456-426614174000",
+          "sellerId": "seller_456e7890-e89b-12d3-a456-426614174001",
+          "name": "Wireless Bluetooth Headphones",
+          "description": "High-quality wireless headphones with noise cancellation",
+          "price": 99.99,
+          "quantity": 50,
+          "category": "Electronics",
+          "createdAt": "2023-12-01T10:30:00Z"
+        }
+      }
+    },
+    {
+      "eventType": "ProductUpdated",
+      "event": {
+        "eventId": "evt_234e5678-e89b-12d3-a456-426614174003",
+        "eventType": "ProductUpdated",
+        "timestamp": "2023-12-01T11:15:00Z",
+        "version": "1.0.0",
+        "source": "core-service",
+        "correlationId": "corr_567e8901-e89b-12d3-a456-426614174004",
+        "userId": "user_890e1234-e89b-12d3-a456-426614174005",
+        "sessionId": "sess_def456",
+        "metadata": {
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+          "ipAddress": "192.168.1.101",
+          "requestId": "req_234567"
+        },
+        "data": {
+          "productId": "prod_123e4567-e89b-12d3-a456-426614174000",
+          "sellerId": "seller_456e7890-e89b-12d3-a456-426614174001",
+          "name": "Wireless Bluetooth Headphones Pro",
+          "description": "High-quality wireless headphones with advanced noise cancellation",
+          "price": 129.99,
+          "quantity": 25,
+          "category": "Electronics",
+          "updatedAt": "2023-12-01T11:15:00Z",
+          "previousQuantity": 50,
+          "changes": {
+            "price": "129.99",
+            "quantity": "25",
+            "name": "Wireless Bluetooth Headphones Pro"
+          },
+          "previousState": {
+            "price": "99.99",
+            "quantity": "50",
+            "name": "Wireless Bluetooth Headphones"
+          }
+        }
+      }
+    },
+    {
+      "eventType": "LowStockWarning",
+      "event": {
+        "eventId": "evt_345e6789-e89b-12d3-a456-426614174006",
+        "eventType": "LowStockWarning",
+        "timestamp": "2023-12-01T14:30:00Z",
+        "version": "1.0.0",
+        "source": "core-service",
+        "correlationId": "corr_678e9012-e89b-12d3-a456-426614174007",
+        "userId": "user_901e2345-e89b-12d3-a456-426614174008",
+        "sessionId": "sess_ghi789",
+        "metadata": {
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
+          "ipAddress": "192.168.1.102",
+          "requestId": "req_345678"
+        },
+        "data": {
+          "productId": "prod_123e4567-e89b-12d3-a456-426614174000",
+          "sellerId": "seller_456e7890-e89b-12d3-a456-426614174001",
+          "name": "Wireless Bluetooth Headphones Pro",
+          "currentQuantity": 5,
+          "threshold": 10,
+          "category": "Electronics",
+          "triggeredAt": "2023-12-01T14:30:00Z"
+        }
+      }
+    },
+    {
+      "eventType": "ProductDeleted",
+      "event": {
+        "eventId": "evt_456e7890-e89b-12d3-a456-426614174009",
+        "eventType": "ProductDeleted",
+        "timestamp": "2023-12-01T16:45:00Z",
+        "version": "1.0.0",
+        "source": "core-service",
+        "correlationId": "corr_789e0123-e89b-12d3-a456-426614174010",
+        "userId": "user_012e3456-e89b-12d3-a456-426614174011",
+        "sessionId": "sess_jkl012",
+        "metadata": {
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+          "ipAddress": "192.168.1.103",
+          "requestId": "req_456789"
+        },
+        "data": {
+          "productId": "prod_123e4567-e89b-12d3-a456-426614174000",
+          "sellerId": "seller_456e7890-e89b-12d3-a456-426614174001",
+          "name": "Wireless Bluetooth Headphones Pro",
+          "deletedAt": "2023-12-01T16:45:00Z",
+          "reason": "Product discontinued"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "description": "Sample events for testing and development",
+    "note": "These are example events that can be used for testing event processing, validation, and integration scenarios",
+    "fields": {
+      "eventId": "UUID v4 format",
+      "eventType": "One of: ProductCreated, ProductUpdated, ProductDeleted, LowStockWarning",
+      "timestamp": "ISO 8601 format",
+      "version": "Semantic versioning (e.g., 1.0.0)",
+      "source": "Service name that generated the event",
+      "correlationId": "UUID for tracing related events",
+      "userId": "UUID of the user who triggered the event",
+      "sessionId": "Optional session identifier",
+      "metadata": "Optional request metadata",
+      "data": "Event-specific data payload"
+    }
+  }
+}

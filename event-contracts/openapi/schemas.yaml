@@ -1,0 +1,309 @@
+# Event Schemas for OpenAPI Specification
+# These schemas define the event structures for API documentation
+
+BaseEvent:
+  type: object
+  required:
+    - eventId
+    - eventType
+    - timestamp
+    - version
+    - source
+    - correlationId
+    - userId
+  properties:
+    eventId:
+      type: string
+      format: uuid
+      description: Unique identifier for the event
+      example: "123e4567-e89b-12d3-a456-426614174000"
+    eventType:
+      type: string
+      enum: [ProductCreated, ProductUpdated, ProductDeleted, LowStockWarning]
+      description: Type of the event
+      example: "ProductCreated"
+    timestamp:
+      type: string
+      format: date-time
+      description: ISO 8601 timestamp when the event occurred
+      example: "2023-12-01T10:30:00Z"
+    version:
+      type: string
+      pattern: '^\d+\.\d+\.\d+$'
+      description: Schema version
+      example: "1.0.0"
+    source:
+      type: string
+      description: Service that generated the event
+      example: "core-service"
+    correlationId:
+      type: string
+      format: uuid
+      description: Correlation ID for tracing related events
+      example: "456e7890-e89b-12d3-a456-426614174001"
+    userId:
+      type: string
+      format: uuid
+      description: ID of the user who triggered the event
+      example: "789e0123-e89b-12d3-a456-426614174002"
+    sessionId:
+      type: string
+      description: Session identifier
+      example: "sess_abc123"
+    metadata:
+      type: object
+      properties:
+        userAgent:
+          type: string
+          description: User agent string
+          example: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        ipAddress:
+          type: string
+          format: ipv4
+          description: IP address of the request
+          example: "192.168.1.100"
+        requestId:
+          type: string
+          description: Request identifier
+          example: "req_123456"
+
+ProductCreatedEvent:
+  allOf:
+    - $ref: '#/components/schemas/BaseEvent'
+    - type: object
+      properties:
+        eventType:
+          type: string
+          const: ProductCreated
+        data:
+          type: object
+          required:
+            - productId
+            - sellerId
+            - name
+            - description
+            - price
+            - quantity
+            - category
+            - createdAt
+          properties:
+            productId:
+              type: string
+              format: uuid
+              description: Unique product identifier
+              example: "prod_123e4567-e89b-12d3-a456-426614174000"
+            sellerId:
+              type: string
+              format: uuid
+              description: ID of the seller
+              example: "seller_456e7890-e89b-12d3-a456-426614174001"
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              description: Product name
+              example: "Wireless Bluetooth Headphones"
+            description:
+              type: string
+              maxLength: 1000
+              description: Product description
+              example: "High-quality wireless headphones with noise cancellation"
+            price:
+              type: number
+              minimum: 0
+              description: Product price
+              example: 99.99
+            quantity:
+              type: integer
+              minimum: 0
+              description: Available quantity
+              example: 50
+            category:
+              type: string
+              enum: [Electronics, Clothing, Books, Home, Sports, Other]
+              description: Product category
+              example: "Electronics"
+            createdAt:
+              type: string
+              format: date-time
+              description: Creation timestamp
+              example: "2023-12-01T10:30:00Z"
+
+ProductUpdatedEvent:
+  allOf:
+    - $ref: '#/components/schemas/BaseEvent'
+    - type: object
+      properties:
+        eventType:
+          type: string
+          const: ProductUpdated
+        data:
+          type: object
+          required:
+            - productId
+            - sellerId
+            - name
+            - description
+            - price
+            - quantity
+            - category
+            - updatedAt
+            - changes
+            - previousState
+          properties:
+            productId:
+              type: string
+              format: uuid
+              example: "prod_123e4567-e89b-12d3-a456-426614174000"
+            sellerId:
+              type: string
+              format: uuid
+              example: "seller_456e7890-e89b-12d3-a456-426614174001"
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              example: "Wireless Bluetooth Headphones Pro"
+            description:
+              type: string
+              maxLength: 1000
+              example: "High-quality wireless headphones with advanced noise cancellation"
+            price:
+              type: number
+              minimum: 0
+              example: 129.99
+            quantity:
+              type: integer
+              minimum: 0
+              example: 25
+            category:
+              type: string
+              enum: [Electronics, Clothing, Books, Home, Sports, Other]
+              example: "Electronics"
+            updatedAt:
+              type: string
+              format: date-time
+              example: "2023-12-01T11:15:00Z"
+            previousQuantity:
+              type: integer
+              minimum: 0
+              description: Previous quantity before update
+              example: 50
+            changes:
+              type: object
+              description: Fields that were changed
+              example:
+                price: 129.99
+                quantity: 25
+                name: "Wireless Bluetooth Headphones Pro"
+            previousState:
+              type: object
+              description: Previous state of the product
+              example:
+                price: 99.99
+                quantity: 50
+                name: "Wireless Bluetooth Headphones"
+
+ProductDeletedEvent:
+  allOf:
+    - $ref: '#/components/schemas/BaseEvent'
+    - type: object
+      properties:
+        eventType:
+          type: string
+          const: ProductDeleted
+        data:
+          type: object
+          required:
+            - productId
+            - sellerId
+            - name
+            - deletedAt
+          properties:
+            productId:
+              type: string
+              format: uuid
+              example: "prod_123e4567-e89b-12d3-a456-426614174000"
+            sellerId:
+              type: string
+              format: uuid
+              example: "seller_456e7890-e89b-12d3-a456-426614174001"
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              example: "Wireless Bluetooth Headphones"
+            deletedAt:
+              type: string
+              format: date-time
+              example: "2023-12-01T12:00:00Z"
+            reason:
+              type: string
+              description: Reason for deletion
+              example: "Product discontinued"
+
+LowStockWarningEvent:
+  allOf:
+    - $ref: '#/components/schemas/BaseEvent'
+    - type: object
+      properties:
+        eventType:
+          type: string
+          const: LowStockWarning
+        data:
+          type: object
+          required:
+            - productId
+            - sellerId
+            - name
+            - currentQuantity
+            - threshold
+            - category
+            - triggeredAt
+          properties:
+            productId:
+              type: string
+              format: uuid
+              example: "prod_123e4567-e89b-12d3-a456-426614174000"
+            sellerId:
+              type: string
+              format: uuid
+              example: "seller_456e7890-e89b-12d3-a456-426614174001"
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+              example: "Wireless Bluetooth Headphones"
+            currentQuantity:
+              type: integer
+              minimum: 0
+              description: Current quantity
+              example: 5
+            threshold:
+              type: integer
+              minimum: 0
+              description: Low stock threshold
+              example: 10
+            category:
+              type: string
+              enum: [Electronics, Clothing, Books, Home, Sports, Other]
+              example: "Electronics"
+            triggeredAt:
+              type: string
+              format: date-time
+              description: When the warning was triggered
+              example: "2023-12-01T14:30:00Z"
+
+ProductEvent:
+  oneOf:
+    - $ref: '#/components/schemas/ProductCreatedEvent'
+    - $ref: '#/components/schemas/ProductUpdatedEvent'
+    - $ref: '#/components/schemas/ProductDeletedEvent'
+    - $ref: '#/components/schemas/LowStockWarningEvent'
+  discriminator:
+    propertyName: eventType
+    mapping:
+      ProductCreated: '#/components/schemas/ProductCreatedEvent'
+      ProductUpdated: '#/components/schemas/ProductUpdatedEvent'
+      ProductDeleted: '#/components/schemas/ProductDeletedEvent'
+      LowStockWarning: '#/components/schemas/LowStockWarningEvent'

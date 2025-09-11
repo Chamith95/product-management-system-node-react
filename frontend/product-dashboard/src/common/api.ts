@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { AxiosInstance, AxiosResponse } from 'axios'
 import type { ApiCommonResponse, CreateProductInput, Product, ProductResponse, UpdateProductInput } from '@/types'
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
 const api: AxiosInstance = axios.create({
 	baseURL: API_BASE,

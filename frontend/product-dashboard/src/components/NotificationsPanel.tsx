@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Package } from 'lucide-react'
-import { connectNotifications, type NotificationData } from '@/common/ws'
 import { NotificationCard } from './NotificationCard'
+import type {NotificationData} from '@/common/ws';
+import {  connectNotifications } from '@/common/ws'
 
 export function NotificationsPanel() {
-  const [items, setItems] = useState<NotificationData[]>([])
+  const [items, setItems] = useState<Array<NotificationData>>([])
 
   useEffect(() => {
     return connectNotifications((n) =>

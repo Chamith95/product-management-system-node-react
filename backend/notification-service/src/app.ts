@@ -22,7 +22,7 @@ class App {
   constructor() {
     this.app = express();
     this.server = createServer(this.app);
-    this.port = parseInt(process.env.PORT || '3002');
+    this.port = parseInt(process.env.NOTIFICATION_SERVICE_PORT || '3001');
     
     this.initializeMiddlewares();
     this.initializeRoutes();
@@ -82,6 +82,21 @@ class App {
           totalClients: this.webSocketService.getTotalConnectedClients()
         }
       });
+    });
+    
+    // Test endpoint to simulate events
+    this.app.post('/test-event', (req, res) => {
+      try {
+        const event = req.body;
+        if (event.eventType === 'LowStockWarning') {
+          this.webSocketService.emitLowStockWarning(event);
+          res.json({ success: true, message: 'Test event processed' });
+        } else {
+          res.status(400).json({ success: false, message: 'Invalid event type' });
+        }
+      } catch (error) {
+        res.status(500).json({ success: false, message: 'Error processing test event' });
+      }
     });
     
     this.app.use('*', (req, res) => {
